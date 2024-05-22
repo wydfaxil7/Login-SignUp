@@ -27,12 +27,26 @@ app.post("/signup", async (req, res) => {
         name: req.body.username,
         password: req.body.password
     }
+    
+    // check if the user already exists
+    const existingUser = await collection.findOne({name: data.name});
+    if (existingUser) {
+        res.send("User already Exists! Please try with another one.")
+    } else {
+        // hashing the password in database using bcrypt
+        const saltRounds = 10; // Number of salt round for bcrypt
+        const hashedpassword = await bcrypt.hash(data.password, saltRounds);
 
-    const userdata = await collection.insertMany(data);
-    console.log(userdata);
+        data.password = hashedpassword; // now replace the hashed password with the original password
+
+        const userdata = await collection.insertMany(data);
+        console.log(userdata);
+    }
+
+    
 })
 
 const port = 5000;
 app.listen(port, () => {
     console.log(`Server is running on Port: ${port}`);
-})
+});
