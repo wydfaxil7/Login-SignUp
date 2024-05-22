@@ -21,7 +21,7 @@ app.get("/signup", (req, res) => {
     res.render("signup");
 });
 
-// User Registration 
+/* User Registration */
 app.post("/signup", async (req, res) => {
     const data  = {
         name: req.body.username,
@@ -42,8 +42,27 @@ app.post("/signup", async (req, res) => {
         const userdata = await collection.insertMany(data);
         console.log(userdata);
     }
+});
 
-    
+/* Login User */
+app.post("/login" , async(req, res) => {
+    try {
+        const check = await collection.findOne({name: req.body.username});
+        if (!check) {
+            res.send("User cannot be found")
+        }
+
+        // compare the hash password from database to confirm the correct password
+        const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+        if(isPasswordMatch) { 
+            res.render("home");
+        } else {
+            req.send("Wrong Password!");
+        }
+    } catch {
+        res.send("Wrong Credentials!")
+        
+    }
 })
 
 const port = 5000;
