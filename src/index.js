@@ -10,7 +10,7 @@ app.use(express.urlencoded({extended: false}));
 
 //set the view engine as ejs
 app.set('view engine', 'ejs');
-// adding file statically
+// serving static files
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
